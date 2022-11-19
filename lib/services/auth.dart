@@ -33,18 +33,44 @@ class AuthService {
   }
 
   //sign in email/password
+  Future<MyUser?> signInWithEmailAndPassword(String email, String password) async {
+    logger.i("Register User");
+
+    try {
+      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      User? user = result.user;
+      return _userFromFirebaseUser(user);
+    } catch (e) {
+      logger.e("Error Signing in", e.toString());
+      return null;
+    }
+  }
+
+  
+
+  //Register new user
+  Future<MyUser?> registerWithEmailAndPassword(String email, String password) async {
+    logger.i("Register User");
+
+    try {
+      UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      User? user = result.user;
+      return _userFromFirebaseUser(user);
+    } catch (e) {
+      logger.e("Error registering new user", e.toString());
+      return null;
+    }
+  }
 
   //sign out
-  //sign in anonymous
   Future<void> signOut() async {
-    logger.i("Signing out user");
+
     logger.d("Signing out user");
 
     try {
       return await _auth.signOut();
-
     } catch (e) {
-      logger.e("[ClassName] Method Name: Error logging out", e.toString());
+      logger.e(" Error logging out", e.toString());
     }
   }
 }

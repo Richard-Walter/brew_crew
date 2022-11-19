@@ -1,19 +1,19 @@
 import 'package:brew_crew/services/auth.dart';
+import 'package:brew_crew/models/MyUser.dart';
 import 'package:flutter/material.dart';
 import 'package:brew_crew/logger.dart';
-import 'package:brew_crew/models/MyUser.dart';
 
-class SignIn extends StatefulWidget {
+class Register extends StatefulWidget {
   final Function toggleView;
-  const SignIn({super.key, required this.toggleView});
+  Register({super.key, required this.toggleView});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _SignInState extends State<SignIn> {
+class _RegisterState extends State<Register> {
   final AuthService _auth = AuthService();
-  final _formKey = GlobalKey<FormState>(); //associate our form with this key
+  final Register = GlobalKey<FormState>(); //associate our form with this key
 
   String email = '';
   String password = '';
@@ -26,11 +26,11 @@ class _SignInState extends State<SignIn> {
         appBar: AppBar(
           backgroundColor: Colors.brown[400],
           elevation: 0.0, //remove drop shadow
-          title: Text('Sign in to Brew Crew'),
+          title: const Text('Sign up to Brew Crew'),
           actions: <Widget>[
             TextButton.icon(
               icon: Icon(Icons.person),
-              label: Text('Register'),
+              label: Text('Sign In'),
               onPressed: () {
                 // this.toggleView();  //wont work as it refers to the state object
                 widget.toggleView(); //wont work as it refers to the state object
@@ -42,12 +42,14 @@ class _SignInState extends State<SignIn> {
         body: Container(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
             child: Form(
-                key: _formKey, //keeps track and state of the form.  Useful for validation
+                key: Register, //keeps track and state of the form.  Useful for validation
                 child: Column(
                   children: <Widget>[
                     const SizedBox(
                       height: 20,
                     ),
+
+                    //email address
                     TextFormField(
                       //return null if field is valid, otherwise error message
                       validator: (value) => value!.isEmpty ? 'Enter an email' : null,
@@ -58,8 +60,9 @@ class _SignInState extends State<SignIn> {
                     const SizedBox(
                       height: 20,
                     ),
+
+                    //password
                     TextFormField(
-                      //return null if field is valid, otherwise error message
                       validator: (value) => value!.length < 6 ? 'Enter a password 6+ chars long' : null,
                       onChanged: (value) {
                         setState(() => password = value);
@@ -71,24 +74,24 @@ class _SignInState extends State<SignIn> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        if (_formKey.currentState?.validate() == true) {
-                          MyUser? result = await _auth.signInWithEmailAndPassword(email, password);
+                        if (Register.currentState?.validate() == true) {
+                          MyUser? result = await _auth.registerWithEmailAndPassword(email, password);
                           if (result == null) {
                             setState(() {
-                              error = 'Invalid credentials.  Try again';
+                              error = 'Please supply valid email address';
                             });
                           }
                         }
                       },
                       style: TextButton.styleFrom(backgroundColor: Colors.pink[400]),
-                      child: const Text('sign in'),
+                      child: const Text('Register'),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 12,
                     ),
                     Text(
                       error,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
+                      style: TextStyle(color: Colors.red, fontSize: 14),
                     )
                   ],
                 ))));

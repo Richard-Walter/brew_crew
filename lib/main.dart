@@ -20,8 +20,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<MyUser?>.value(
-      value: AuthService().user,
+    return StreamProvider<MyUser?>.value(   //create MyUser Provider
+      value: AuthService().user,  //provider value
       initialData: null,
       child: MaterialApp(
           title: 'Flutter Demo',
