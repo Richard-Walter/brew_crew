@@ -1,17 +1,7 @@
 import 'package:brew_crew/models/MyUser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
-
-final logger = Logger(
-    printer: PrettyPrinter(
-  methodCount: 0,
-  errorMethodCount: 5,
-  lineLength: 50,
-  colors: true,
-  printEmojis: true,
-  printTime: true,
-));
+import 'package:brew_crew/logger.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -23,9 +13,10 @@ class AuthService {
 
   // auth change user stream
   Stream<MyUser?> get user {
-    return _auth.authStateChanges()
-    // .map((User? user) => _userFromFirebaseUser(user));
-    .map(_userFromFirebaseUser);  // shorthand for above
+    return _auth
+        .authStateChanges()
+        // .map((User? user) => _userFromFirebaseUser(user));
+        .map(_userFromFirebaseUser); // shorthand for above
   }
 
   //sign in anonymous
@@ -44,5 +35,16 @@ class AuthService {
   //sign in email/password
 
   //sign out
+  //sign in anonymous
+  Future<void> signOut() async {
+    logger.i("Signing out user");
+    logger.d("Signing out user");
 
+    try {
+      return await _auth.signOut();
+
+    } catch (e) {
+      logger.e("[ClassName] Method Name: Error logging out", e.toString());
+    }
+  }
 }
