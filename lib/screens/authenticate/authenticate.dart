@@ -1,4 +1,6 @@
+import 'package:brew_crew/screens/authenticate/sign_in.dart';
 import 'package:flutter/material.dart';
+
 
 class Authenticate extends StatefulWidget {
   const Authenticate({super.key});
@@ -12,7 +14,7 @@ class _AuthenticateState extends State<Authenticate> {
   Widget build(BuildContext context) {
     return Container(
 
-      child: Text('authenticate'),
+      child: SignIn(),
     );
   }
 }
