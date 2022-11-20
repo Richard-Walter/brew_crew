@@ -1,7 +1,9 @@
 import 'package:brew_crew/services/auth.dart';
+import 'package:brew_crew/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:brew_crew/logger.dart';
 import 'package:brew_crew/models/MyUser.dart';
+import 'package:brew_crew/shared/constants.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
@@ -15,13 +17,17 @@ class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>(); //associate our form with this key
 
+  bool loading = false;
+
   String email = '';
   String password = '';
   String error = '';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+
+    //show loading widget if false
+    return loading? const Loading() :Scaffold(
         backgroundColor: Colors.brown[100],
         appBar: AppBar(
           backgroundColor: Colors.brown[400],
@@ -49,6 +55,7 @@ class _SignInState extends State<SignIn> {
                       height: 20,
                     ),
                     TextFormField(
+                      decoration: textInputDecoration.copyWith(hintText: 'Email'),
                       //return null if field is valid, otherwise error message
                       validator: (value) => value!.isEmpty ? 'Enter an email' : null,
                       onChanged: (value) {
@@ -59,6 +66,7 @@ class _SignInState extends State<SignIn> {
                       height: 20,
                     ),
                     TextFormField(
+                      decoration: textInputDecoration.copyWith(hintText: 'Password'),
                       //return null if field is valid, otherwise error message
                       validator: (value) => value!.length < 6 ? 'Enter a password 6+ chars long' : null,
                       onChanged: (value) {
@@ -72,10 +80,15 @@ class _SignInState extends State<SignIn> {
                     ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState?.validate() == true) {
+                          setState(() {
+                            loading = true;
+                          });
                           MyUser? result = await _auth.signInWithEmailAndPassword(email, password);
+
                           if (result == null) {
                             setState(() {
                               error = 'Invalid credentials.  Try again';
+                              loading = false;
                             });
                           }
                         }

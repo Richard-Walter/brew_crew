@@ -1,4 +1,5 @@
 import 'package:brew_crew/models/MyUser.dart';
+import 'package:brew_crew/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brew_crew/logger.dart';
@@ -46,8 +47,6 @@ class AuthService {
     }
   }
 
-  
-
   //Register new user
   Future<MyUser?> registerWithEmailAndPassword(String email, String password) async {
     logger.i("Register User");
@@ -55,6 +54,9 @@ class AuthService {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
+
+      //create new document for this new user
+      await DatabaseService(uid: user!.uid).updateUserData('0', 'new crew member', 100);
       return _userFromFirebaseUser(user);
     } catch (e) {
       logger.e("Error registering new user", e.toString());
@@ -64,7 +66,6 @@ class AuthService {
 
   //sign out
   Future<void> signOut() async {
-
     logger.d("Signing out user");
 
     try {

@@ -1,7 +1,9 @@
 import 'package:brew_crew/services/auth.dart';
 import 'package:brew_crew/models/MyUser.dart';
+import 'package:brew_crew/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:brew_crew/logger.dart';
+import 'package:brew_crew/shared/constants.dart';
 
 class Register extends StatefulWidget {
   final Function toggleView;
@@ -13,7 +15,8 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final AuthService _auth = AuthService();
-  final Register = GlobalKey<FormState>(); //associate our form with this key
+  final registerFormKey = GlobalKey<FormState>(); //associate our form with this key
+  bool loading = false;
 
   String email = '';
   String password = '';
@@ -21,7 +24,7 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading? const Loading():Scaffold(
         backgroundColor: Colors.brown[100],
         appBar: AppBar(
           backgroundColor: Colors.brown[400],
@@ -42,7 +45,7 @@ class _RegisterState extends State<Register> {
         body: Container(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
             child: Form(
-                key: Register, //keeps track and state of the form.  Useful for validation
+                key: registerFormKey, //keeps track and state of the form.  Useful for validation
                 child: Column(
                   children: <Widget>[
                     const SizedBox(
@@ -51,6 +54,7 @@ class _RegisterState extends State<Register> {
 
                     //email address
                     TextFormField(
+                      decoration: textInputDecoration.copyWith(hintText: 'Email'),
                       //return null if field is valid, otherwise error message
                       validator: (value) => value!.isEmpty ? 'Enter an email' : null,
                       onChanged: (value) {
@@ -63,6 +67,7 @@ class _RegisterState extends State<Register> {
 
                     //password
                     TextFormField(
+                      decoration: textInputDecoration.copyWith(hintText: 'Password'),
                       validator: (value) => value!.length < 6 ? 'Enter a password 6+ chars long' : null,
                       onChanged: (value) {
                         setState(() => password = value);
@@ -74,15 +79,20 @@ class _RegisterState extends State<Register> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        if (Register.currentState?.validate() == true) {
+                        if (registerFormKey.currentState?.validate() == true) {
+                          setState(() {
+                            loading = true;
+                          });
                           MyUser? result = await _auth.registerWithEmailAndPassword(email, password);
                           if (result == null) {
                             setState(() {
                               error = 'Please supply valid email address';
+                              loading = false;
                             });
                           }
                         }
                       },
+                      
                       style: TextButton.styleFrom(backgroundColor: Colors.pink[400]),
                       child: const Text('Register'),
                     ),
