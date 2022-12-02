@@ -19,10 +19,7 @@ class Home extends StatelessWidget {
       showModalBottomSheet(
           context: context,
           builder: (context) {
-            return Container(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 60),
-              child: SettingsForm()
-            );
+            return Container(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 60), child: SettingsForm());
           });
     }
 
@@ -52,7 +49,14 @@ class Home extends StatelessWidget {
             ),
           ],
         ),
-        body: const BrewList(),
+        body: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('images/coffee_bg.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: const BrewList()),
       ),
     );
   }
